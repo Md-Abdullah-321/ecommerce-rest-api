@@ -19,7 +19,6 @@ Welcome to my eCommerce API project! This API is built with Node.js, Express.js,
 - Express.js
 - Mongoose (MongoDB)
 - Authentication (JWT)
-- Payment Gateway Integration (Stripe)
 - And more!
 
 ## Installation 📦
