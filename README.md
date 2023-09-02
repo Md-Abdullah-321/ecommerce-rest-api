@@ -4,10 +4,10 @@ Welcome to my eCommerce API project! This API is built with Node.js, Express.js,
 
 ## Features 🚀
 
-✅ User Authentication: Register, log in, and manage user accounts securely. 
-✅ Product Management: Create, read, update, and delete products. 
-✅ Shopping Cart: Add and remove items from the shopping cart. 
-✅ Order Processing: Checkout, confirm orders, and view order history.       
+✅ User Authentication: Register, log in, and manage user accounts securely.                                                                                                                                                          
+✅ Product Management: Create, read, update, and delete products.                                                                                                                                                                     
+✅ Shopping Cart: Add and remove items from the shopping cart.                                                                                                                                                                        
+✅ Order Processing: Checkout, confirm orders, and view order history.                                                                                                                                                                
 ✅ Categories: Organize products into categories for easy navigation.   
 ✅ Reviews and Ratings: Let users leave product reviews and ratings.  
 ✅ Payment Integration: Securely process payments for orders.
