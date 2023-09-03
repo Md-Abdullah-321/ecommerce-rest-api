@@ -4,6 +4,8 @@ const { successResponse } = require('./responseController');
 const { default: mongoose } = require('mongoose');
 const { findWithId } = require('../services/findItem');
 const { deleteImage } = require('../../helper/deleteImage');
+const { createJSONWebToken } = require('../../helper/jsonwebtoken');
+const { jwtActivationKey, clientURL } = require('../secret');
 const fs = require('fs').promises;
 
 
@@ -104,14 +106,23 @@ const processRegister = async(req, res, next) => {
          }
 
          //create json web token:
-         const newUser = {
-            name, email, password, phone, address
-        }
+         const token = createJSONWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
 
+         //prepare email:
+         const emailDate = {
+             email,
+             subject: 'Account Activation Email',
+             html: `
+             <h2>Hello ${name} </h2>
+             <p>Please click here to <a href="${clientURL}/api/users/activate/${token} target="_blank">activate your account</a> </p>
+             `
+         }
+
+         //send email with nodemailer:
         return successResponse(res, {
             statusCode: 200,
             message: 'user wes created successfully',
-            payload: {newUser}
+            payload: {token}
         })
     } catch (error) {
         
