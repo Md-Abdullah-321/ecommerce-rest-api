@@ -1,3 +1,13 @@
+/*
+ * Title: User Controller
+ * Description: Control all user routes controller.
+ * Author: MD Abdullah
+ * Date: 05/09/2023
+ */
+
+
+
+//Dependencies:
 const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
@@ -6,7 +16,10 @@ const { findWithId } = require('../services/findItem');
 const { deleteImage } = require('../../helper/deleteImage');
 const { createJSONWebToken } = require('../../helper/jsonwebtoken');
 const { jwtActivationKey, clientURL } = require('../secret');
+const emailWithNodeMailer = require('../../helper/email');
 const fs = require('fs').promises;
+const jwt = require('jsonwebtoken');
+const { decode } = require('punycode');
 
 
 //get all users:
@@ -109,21 +122,67 @@ const processRegister = async(req, res, next) => {
          const token = createJSONWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
 
          //prepare email:
-         const emailDate = {
+         const emailData = {
              email,
              subject: 'Account Activation Email',
              html: `
              <h2>Hello ${name} </h2>
-             <p>Please click here to <a href="${clientURL}/api/users/activate/${token} target="_blank">activate your account</a> </p>
+             <p>Please click here to <a href="${clientURL}/api/users/verify/${token} target="_blank">activate your account</a> </p>
              `
-         }
+         } 
 
          //send email with nodemailer:
+         try {
+             await emailWithNodeMailer(emailData);
+         } catch (emailError) {
+             next(createError(500, 'Failed to send verification email'));
+             return;
+         }
+
         return successResponse(res, {
             statusCode: 200,
-            message: 'user wes created successfully',
+            message: `Please, go to your ${email}  for completing your registration process`,
             payload: {token}
         })
+    } catch (error) {
+        
+        next(error)
+    }
+}
+
+const activateUserAccount = async(req, res, next) => {
+     try {
+        const token = req.body.token;
+        
+         if (!token) {
+             throw createError(404, 'token not found');
+        }
+
+         try {
+            const decoded = jwt.verify(token, jwtActivationKey);
+         
+            if(!decode) throw createError(404, 'user was not able to verified')
+
+            const userExist = await User.exists({ email: decode.email });
+
+            if (userExist) {
+             throw createError(409, "User with this email already exist, please login")
+         }
+             
+            await User.create(decoded)
+            return successResponse(res, {
+                statusCode: 201,
+                message: `user was registered succuessfully`,
+        })
+         } catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                throw createError(401, 'Token has expired');
+             } else if (error.name === 'JsonWebTokenError') {
+                 throw createError(401, 'Invalid token');
+             } else {
+                 throw error;
+            }
+         }
     } catch (error) {
         
         next(error)
@@ -134,5 +193,6 @@ module.exports = {
     getUsers,
     getUserById,
     deleteUserById,
-    processRegister
+    processRegister,
+    activateUserAccount
 }
