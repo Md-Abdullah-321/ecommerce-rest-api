@@ -80,8 +80,10 @@ const getUserById = async(req, res, next) => {
             payload: {user},
         })
     } catch (error) {
-        
-        next(error)
+        if (error instanceof mongoose.Error) {
+            throw createError(400, "Invalid item Id");
+        }
+        throw (error)
     }
 }
 
@@ -91,7 +93,7 @@ const deleteUserById = async(req, res, next) => {
         const id = req.params.id;
         const options = { password: 0 };
         
-        const user = await findWithId(id, options);
+        const user = await findWithId(User,id,options);
 
         const userImagePath = user.image;
         deleteImage(userImagePath);
@@ -108,36 +110,49 @@ const deleteUserById = async(req, res, next) => {
     }
 }
 
+
+//POST: Process register
 const processRegister = async(req, res, next) => {
      try {
         const { name, email, password, phone, address } = req.body;
 
-         const userExist = await User.exists({ email: email });
+         const image = req.file;
+        if (!image) {
+            throw createError(400, 'image file is required');
+        }
+         
+         if (image.size > 1024 * 1024 * 2) {
+            throw createError(400, 'File is too large')
+        }
+         
+        const imageBufferString = image.buffer.toString('base64');
+         
+        const userExist = await User.exists({ email: email });
 
-         if (userExist) {
-             throw createError(409, "User with this email already exist, please login")
-         }
+        if (userExist) {
+            throw createError(409, "User with this email already exist, please login")
+        }
 
-         //create json web token:
-         const token = createJSONWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
+        //create json web token:
+        const token = createJSONWebToken({ name, email, password, phone, address, image: imageBufferString}, jwtActivationKey, '10m');
 
          //prepare email:
-         const emailData = {
-             email,
-             subject: 'Account Activation Email',
-             html: `
-             <h2>Hello ${name} </h2>
-             <p>Please click here to <a href="${clientURL}/api/users/verify/${token} target="_blank">activate your account</a> </p>
+        const emailData = {
+            email,
+            subject: 'Account Activation Email',
+            html: `
+            <h2>Hello ${name} </h2>
+            <p>Please click here to <a href="${clientURL}/api/users/verify/${token} target="_blank">activate your account</a> </p>
              `
-         } 
+        } 
 
-         //send email with nodemailer:
-         try {
-             await emailWithNodeMailer(emailData);
-         } catch (emailError) {
-             next(createError(500, 'Failed to send verification email'));
-             return;
-         }
+        //send email with nodemailer:
+        try {
+            await emailWithNodeMailer(emailData);
+        } catch (emailError) {
+            next(createError(500, 'Failed to send verification email'));
+            return;
+        }
 
         return successResponse(res, {
             statusCode: 200,
@@ -150,6 +165,7 @@ const processRegister = async(req, res, next) => {
     }
 }
 
+//Activate account:
 const activateUserAccount = async(req, res, next) => {
      try {
         const token = req.body.token;
@@ -189,10 +205,52 @@ const activateUserAccount = async(req, res, next) => {
     }
 }
 
+
+//PUT: Update user By Id:
+const updateUserById = async(req, res, next) => {
+    try {
+        const userId = req.params.id;
+        await findWithId(User, userId);
+
+        const updateOptions = { new: true, runValidators: true, contex: 'query'};
+        
+        let updates = {}; 
+        
+        for (let key in req.body) {
+            if (['name', 'password', 'phone', 'address'].includes(key)) {
+                updates[key] = req.body[key];
+            }
+        }
+        const image = req.file;
+
+        if (image) {
+            if (image.size > 1024 * 1024 * 2) {
+                throw createError(400, 'File is too large')
+            }
+
+            updates.image = image.buffer.toString('base64');
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, updateOptions).select("-password");
+
+        if (!updatedUser) {
+            throw createError(404, 'User with this id does not exist');
+        }
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'user wes updated successfully',
+            payload: updatedUser
+        })
+    } catch (error) {
+        
+        next(error)
+    }
+}
 module.exports = {
     getUsers,
     getUserById,
     deleteUserById,
     processRegister,
-    activateUserAccount
+    activateUserAccount,
+    updateUserById
 }
