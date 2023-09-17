@@ -3,6 +3,7 @@ const serverPort = process.env.SERVER_PORT || 3002;
 const Database_URL = process.env.DATABASE_URL;
 const defaultImagePath = process.env.DEFAULT_USER_IMAGE_PATH || 'public/images/users/default.jpeg';
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || 'Process'
+const jwtAccessKey = process.env.JWT_ACCESS_KEY || 'ecommerce_user'
 
 const smtpUsername = process.env.SMTP_USERNAME || '';
 const smtpPassword = process.env.SMTP_PASSWORD || '';
@@ -18,4 +19,5 @@ module.exports = {
     smtpUsername,
     smtpPassword,
     clientURL,
+    jwtAccessKey,
 }

@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const createError = require('http-errors');
@@ -7,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const userRouter = require('./routers/userRouter');
 const { seedRouter } = require('./routers/seedRouter');
 const { errorResponse } = require('./controllers/responseController');
+const authRouter = require('./routers/authRouter');
 
 
 
@@ -27,11 +29,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(xssClean());
 //4. express-rate-limit - limit request from an IP:
 app.use(rateLimiter);
+//5. cookie-parser:
+app.use(cookieParser());
 
 
 //Users Router:
 app.use('/api/users', userRouter);
 app.use('/api/seed', seedRouter);
+app.use('/api/auth', authRouter);
 
 
 //client error handling:

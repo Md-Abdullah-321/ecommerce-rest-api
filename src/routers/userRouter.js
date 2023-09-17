@@ -22,7 +22,7 @@ const userRouter = express.Router();
 userRouter.get('/', getUsers);
 
 //GET: api/users/profile - get user's profile:
-userRouter.get('/:id', getUserById);
+userRouter.get('/:id',getUserById);
 
 //Delete: Delete user by Id:
 userRouter.delete('/:id', deleteUserById);
@@ -35,7 +35,7 @@ userRouter.post('/process-register',
     processRegister);
 
 //POST: Verify user with token:
-userRouter.post('/verify', activateUserAccount);
+userRouter.post('/activate', activateUserAccount);
 
 //PUT: Update user ->
 userRouter.put('/:id', upload.single("image"),updateUserById)
