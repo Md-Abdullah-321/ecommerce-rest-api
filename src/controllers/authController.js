@@ -22,7 +22,7 @@ const handleLogin = async(req, res, next) => {
         //isExist
         const user = await User.findOne({ email });
         if (!user) {
-            errorResponse(res, {
+            return errorResponse(res, {
                 statusCode: 404,
                 message: "User does not exist with this email, please register first."
             })
@@ -32,7 +32,7 @@ const handleLogin = async(req, res, next) => {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
 
          if (!isPasswordMatch) {
-            errorResponse(res, {
+            return errorResponse(res, {
                 statusCode: 401,
                 message: "Email/password did not match."
             })
@@ -40,14 +40,14 @@ const handleLogin = async(req, res, next) => {
         
         //isBanned
         if (user.isBanned) {
-            errorResponse(res, {
+            return errorResponse(res, {
                 statusCode: 403,
                 message: "You are banned, please contact authority."
             })
          }
         //token, coookie
         const accessToken = createJSONWebToken(
-            {email},
+            {_id: user._id},
             jwtAccessKey,
             '10m'
         )

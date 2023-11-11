@@ -12,6 +12,7 @@ const { getUsers, getUserById, deleteUserById, processRegister, activateUserAcco
 const upload = require('../middlewares/uploadFile.');
 const { validateUserRegistration } = require('../validators/auth');
 const runValidation = require('../validators');
+const { isLoggedIn, isLoggedOut } = require('../middlewares/auth');
 const userRouter = express.Router();
 
 
@@ -19,25 +20,26 @@ const userRouter = express.Router();
 
 
 //GET: api/users - get all users:
-userRouter.get('/', getUsers);
+userRouter.get('/', isLoggedIn ,getUsers);
 
 //GET: api/users/profile - get user's profile:
-userRouter.get('/:id',getUserById);
+userRouter.get('/:id', isLoggedIn ,getUserById);
 
 //Delete: Delete user by Id:
-userRouter.delete('/:id', deleteUserById);
+userRouter.delete('/:id', isLoggedIn,deleteUserById);
 
 //POST: process the registration:
 userRouter.post('/process-register',
     upload.single("image"),
+    isLoggedOut,
     validateUserRegistration,
     runValidation,
     processRegister);
 
 //POST: Verify user with token:
-userRouter.post('/activate', activateUserAccount);
+userRouter.post('/activate' ,isLoggedOut, activateUserAccount);
 
 //PUT: Update user ->
-userRouter.put('/:id', upload.single("image"),updateUserById)
+userRouter.put('/:id',upload.single("image"), isLoggedIn ,updateUserById)
 
 module.exports = userRouter;

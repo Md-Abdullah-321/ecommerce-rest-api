@@ -25,7 +25,7 @@ const { decode } = require('punycode');
 //get all users:
 const getUsers = async(req, res, next) => {
     try {
-        const search = req.query.search || '';
+        const search = req.query.search || "";
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 5; 
 
@@ -44,6 +44,7 @@ const getUsers = async(req, res, next) => {
         const users = await User.find(filter, options)
             .limit(limit)
             .skip((page - 1) * limit);
+        
         
         const count = await User.find(filter).countDocuments();
 
@@ -87,7 +88,7 @@ const getUserById = async(req, res, next) => {
     }
 }
 
-//delte user profile:
+//delete user profile:
 const deleteUserById = async(req, res, next) => {
     try {
         const id = req.params.id;
