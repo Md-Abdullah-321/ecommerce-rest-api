@@ -6,7 +6,7 @@
  */
 
 //Dependencies: 
-const { body } = require("express-validator");
+const { body, check } = require("express-validator");
 
 
 //validate Registration:
@@ -52,4 +52,20 @@ const validateUserRegistration = [
 ]
 
 
-module.exports = {validateUserRegistration}
+//validate Registration:
+const validateUserLogin = [
+    body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required, Enter your email address")
+        .isEmail()
+        .withMessage("Invalid emmail address"),
+    body("password")
+        .trim()
+        .notEmpty()
+        .withMessage("Password is required, Enter your password")
+        .isLength({ min: 6})
+        .withMessage("Password should be at least 6 character long"),
+]
+
+module.exports = {validateUserRegistration, validateUserLogin}

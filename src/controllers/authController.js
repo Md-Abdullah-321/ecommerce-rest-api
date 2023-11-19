@@ -44,20 +44,25 @@ const handleLogin = async(req, res, next) => {
                 statusCode: 403,
                 message: "You are banned, please contact authority."
             })
-         }
+        }
+        
         //token, coookie
         const accessToken = createJSONWebToken({user}, jwtAccessKey, '15m');
-
+        
         res.cookie('accessToken', accessToken, {
             maxAge: 15 * 60 * 1000, //15 minutes
             httpOnly: true,
             secure: true,
             sameSite: 'none',
         });
+
+        
+        const userWithoutPassword = await User.findOne({ email }).select('-password');
         //success response
         return successResponse(res, {
             statusCode: 200,
-            message: "user logged in successfully"
+            message: "user logged in successfully",
+            payload: {...userWithoutPassword}
         })
     } catch (error) {
         next(error);
