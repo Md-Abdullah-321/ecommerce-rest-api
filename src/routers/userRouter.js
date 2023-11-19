@@ -12,7 +12,7 @@ const { getUsers, getUserById, deleteUserById, processRegister, activateUserAcco
 const upload = require('../middlewares/uploadFile.');
 const { validateUserRegistration } = require('../validators/auth');
 const runValidation = require('../validators');
-const { isLoggedIn, isLoggedOut } = require('../middlewares/auth');
+const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const userRouter = express.Router();
 
 
@@ -20,7 +20,7 @@ const userRouter = express.Router();
 
 
 //GET: api/users - get all users:
-userRouter.get('/', isLoggedIn ,getUsers);
+userRouter.get('/', isLoggedIn , isAdmin,getUsers);
 
 //GET: api/users/profile - get user's profile:
 userRouter.get('/:id', isLoggedIn ,getUserById);
