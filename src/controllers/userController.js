@@ -92,9 +92,8 @@ const getUserById = async(req, res, next) => {
 const deleteUserById = async(req, res, next) => {
     try {
         const id = req.params.id;
-        const options = { password: 0 };
-        
-        // const user = await findWithId(User,id,options);
+        const options = { password: 0 };   
+        const user = await findWithId(User,id,options);
 
         await User.findByIdAndDelete({ _id: id, isAdmin: false });
 
@@ -244,11 +243,60 @@ const updateUserById = async(req, res, next) => {
         next(error)
     }
 }
+
+
+
+const handleBanUserById = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        await findWithId(User, userId);
+        const updates = { isBanned: true };
+        const updateOptions = { new: true, runValidators: true, context: 'query' };
+
+        const updatedUser = await User.findByIdAndUpdate(userId,updates,updateOptions).select('-password');
+
+        if (!updatedUser) {
+            throw createError(404, 'User was not banned successfully.')
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'user was banned successfully.'
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+const handleUnbanUserById = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        await findWithId(User, userId);
+        const updates = { isBanned: false };
+        const updateOptions = { new: true, runValidators: true, context: 'query' };
+
+        const updatedUser = await User.findByIdAndUpdate(userId,updates,updateOptions).select('-password');
+
+        if (!updatedUser) {
+            throw createError(404, 'User was not unbanned successfully.')
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'user was unbanned successfully.'
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 module.exports = {
     getUsers,
     getUserById,
     deleteUserById,
     processRegister,
     activateUserAccount,
-    updateUserById
+    updateUserById,
+    handleBanUserById,
+    handleUnbanUserById
 }
