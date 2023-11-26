@@ -8,9 +8,9 @@
 
 //Dependencies:
 const express = require('express');
-const { getUsers, getUserById, deleteUserById, processRegister, activateUserAccount, updateUserById, handleBanUserById, handleUnbanUserById } = require('../controllers/userController');
+const { getUsers, getUserById, deleteUserById, processRegister, activateUserAccount, updateUserById, handleBanUserById, handleUnbanUserById, handleUpdatePassword } = require('../controllers/userController');
 const upload = require('../middlewares/uploadFile.');
-const { validateUserRegistration } = require('../validators/auth');
+const { validateUserRegistration, validateUserPasswordUpdate } = require('../validators/auth');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const userRouter = express.Router();
@@ -37,12 +37,18 @@ userRouter.post('/process-register',
     processRegister);
 
 //POST: Verify user with token:
-userRouter.post('/activate' ,isLoggedOut, activateUserAccount);
+userRouter.post('/activate', isLoggedOut, activateUserAccount);
+
+userRouter.put('/update-password/:id', isLoggedIn, validateUserPasswordUpdate,runValidation,handleUpdatePassword);
 
 //PUT: Update user ->
 userRouter.put('/:id', upload.single("image"), isLoggedIn, updateUserById);
 
 userRouter.put('/ban-user/:id', isLoggedIn, isAdmin, handleBanUserById);
 
-userRouter.put('/unban-user/:id',isLoggedIn, isAdmin, handleUnbanUserById);
+userRouter.put('/unban-user/:id', isLoggedIn, isAdmin, handleUnbanUserById);
+
+
+
+
 module.exports = userRouter;

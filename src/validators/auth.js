@@ -68,4 +68,27 @@ const validateUserLogin = [
         .withMessage("Password should be at least 6 character long"),
 ]
 
-module.exports = {validateUserRegistration, validateUserLogin}
+//validate Registration:
+const validateUserPasswordUpdate = [
+    body("oldPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("OldPassword is required, Enter your oldPassword")
+        .isLength({ min: 6})
+        .withMessage("oldPassword should be at least 6 character long"),
+    body("newPassword")
+        .trim()
+        .notEmpty()
+        .withMessage("newPassword is required, Enter your newPassword")
+        .isLength({ min: 6})
+        .withMessage("newPassword should be at least 6 character long"),
+    body("confirmPassword").custom((value, {req}) => {
+        if (value !== req.body.newPassword) {
+            throw new Error("Password did not match.");
+        }
+        return true;
+    })
+    
+]
+
+module.exports = {validateUserRegistration, validateUserLogin, validateUserPasswordUpdate}
