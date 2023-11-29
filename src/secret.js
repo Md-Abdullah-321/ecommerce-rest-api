@@ -11,6 +11,9 @@ const smtpPassword = process.env.SMTP_PASSWORD || '';
 const clientURL = process.env.CLIENT_URL;
 
 
+const jwtForgetPasswordKey = process.env.FORGET_PASSWORD_JWT_KEY || "I_FORGET_MY_PASSWORD";
+
+
 module.exports = {
     serverPort,
     Database_URL,
@@ -20,4 +23,5 @@ module.exports = {
     smtpPassword,
     clientURL,
     jwtAccessKey,
+    jwtForgetPasswordKey
 }

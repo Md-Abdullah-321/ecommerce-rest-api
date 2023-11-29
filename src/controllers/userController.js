@@ -15,7 +15,7 @@ const { default: mongoose } = require('mongoose');
 const { findWithId } = require('../services/findItem');
 const { deleteImage } = require('../../helper/deleteImage');
 const { createJSONWebToken } = require('../../helper/jsonwebtoken');
-const { jwtActivationKey, clientURL } = require('../secret');
+const { jwtActivationKey, clientURL, jwtForgetPasswordKey } = require('../secret');
 const emailWithNodeMailer = require('../../helper/email');
 const bcrypt = require("bcryptjs");
 const fs = require('fs').promises;
@@ -324,6 +324,45 @@ const handleUpdatePassword = async (req, res, next) => {
         next(error);
     }
 }
+const handleForgetPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        const userData = await User.findOne({ email: email });
+        if (!userData) {
+            throw createError(404, "Email is incorrect, Please register first.");
+        }
+
+        //create json web token:
+        const token = createJSONWebToken({email}, jwtForgetPasswordKey, '5m');
+
+         //prepare email:
+        const emailData = {
+            email,
+            subject: 'Forget Password Email',
+            html: `
+            <h2>Hello ${userData.name} </h2>
+            <p>Please click here to <a href="${clientURL}/api/users/reset-password/${token} target="_blank">Reset your password</a> </p>
+             `
+        } 
+
+        //send email with nodemailer:
+        try {
+            await emailWithNodeMailer(emailData);
+        } catch (emailError) {
+            next(createError(500, 'Failed to send forget password email'));
+            return;
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: `Please, go to your ${email}  to reset your password`,
+            payload: { token }
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 
 
 module.exports = {
@@ -335,5 +374,6 @@ module.exports = {
     updateUserById,
     handleBanUserById,
     handleUnbanUserById,
-    handleUpdatePassword
+    handleUpdatePassword,
+    handleForgetPassword
 }

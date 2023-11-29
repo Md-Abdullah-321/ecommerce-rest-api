@@ -68,6 +68,15 @@ const validateUserLogin = [
         .withMessage("Password should be at least 6 character long"),
 ]
 
+//validate Forget Password:
+const validateForgetPassword = [
+    body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required, Enter your email address")
+        .isEmail()
+        .withMessage("Invalid emmail address"),
+]
 //validate Registration:
 const validateUserPasswordUpdate = [
     body("oldPassword")
@@ -91,4 +100,4 @@ const validateUserPasswordUpdate = [
     
 ]
 
-module.exports = {validateUserRegistration, validateUserLogin, validateUserPasswordUpdate}
+module.exports = {validateUserRegistration, validateUserLogin, validateUserPasswordUpdate, validateForgetPassword}
