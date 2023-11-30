@@ -8,9 +8,9 @@
 
 //Dependencies:
 const express = require('express');
-const { getUsers, getUserById, deleteUserById, processRegister, activateUserAccount, updateUserById, handleBanUserById, handleUnbanUserById, handleUpdatePassword, handleForgetPassword } = require('../controllers/userController');
+const { getUsers, getUserById, deleteUserById, processRegister, activateUserAccount, updateUserById, handleBanUserById, handleUnbanUserById, handleUpdatePassword, handleForgetPassword, handleResetPassword } = require('../controllers/userController');
 const upload = require('../middlewares/uploadFile.');
-const { validateUserRegistration, validateUserPasswordUpdate, validateForgetPassword } = require('../validators/auth');
+const { validateUserRegistration, validateUserPasswordUpdate, validateForgetPassword, validateResetPassword } = require('../validators/auth');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const userRouter = express.Router();
@@ -39,7 +39,9 @@ userRouter.post('/process-register',
 //POST: Verify user with token:
 userRouter.post('/activate', isLoggedOut, activateUserAccount);
 
-userRouter.put('/update-password/:id', isLoggedIn, validateUserPasswordUpdate,runValidation,handleUpdatePassword);
+userRouter.put('/update-password/:id', isLoggedIn, validateUserPasswordUpdate, runValidation, handleUpdatePassword);
+
+userRouter.put('/reset-password', validateResetPassword, runValidation, handleResetPassword);
 
 //PUT: Update user ->
 userRouter.put('/:id', upload.single("image"), isLoggedIn, updateUserById);

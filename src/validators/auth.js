@@ -77,6 +77,19 @@ const validateForgetPassword = [
         .isEmail()
         .withMessage("Invalid emmail address"),
 ]
+const validateResetPassword = [
+    body("token")
+        .trim()
+        .notEmpty()
+        .withMessage("Token is required"),
+    body("password")
+        .trim()
+        .notEmpty()
+        .withMessage("Password is required")
+        .isLength({ min: 6})
+        .withMessage("Password should be at least 6 character long"),
+    
+]
 //validate Registration:
 const validateUserPasswordUpdate = [
     body("oldPassword")
@@ -100,4 +113,4 @@ const validateUserPasswordUpdate = [
     
 ]
 
-module.exports = {validateUserRegistration, validateUserLogin, validateUserPasswordUpdate, validateForgetPassword}
+module.exports = {validateUserRegistration, validateUserLogin, validateUserPasswordUpdate, validateForgetPassword, validateResetPassword}
