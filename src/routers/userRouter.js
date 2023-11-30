@@ -23,10 +23,10 @@ const userRouter = express.Router();
 userRouter.get('/', isLoggedIn , isAdmin,getUsers);
 
 //GET: api/users/profile - get user's profile:
-userRouter.get('/:id', isLoggedIn ,getUserById);
+userRouter.get('/:id([0-9a-fA-F]{24})', isLoggedIn ,getUserById);
 
 //Delete: Delete user by Id:
-userRouter.delete('/:id', isLoggedIn,deleteUserById);
+userRouter.delete('/:id([0-9a-fA-F]{24})', isLoggedIn,deleteUserById);
 
 //POST: process the registration:
 userRouter.post('/process-register',
@@ -39,18 +39,18 @@ userRouter.post('/process-register',
 //POST: Verify user with token:
 userRouter.post('/activate', isLoggedOut, activateUserAccount);
 
-userRouter.put('/update-password/:id', isLoggedIn, validateUserPasswordUpdate, runValidation, handleUpdatePassword);
+userRouter.put('/update-password/:id([0-9a-fA-F]{24})', isLoggedIn, validateUserPasswordUpdate, runValidation, handleUpdatePassword);
 
 userRouter.put('/reset-password', validateResetPassword, runValidation, handleResetPassword);
 
 //PUT: Update user ->
-userRouter.put('/:id', upload.single("image"), isLoggedIn, updateUserById);
+userRouter.put('/:id([0-9a-fA-F]{24})', upload.single("image"), isLoggedIn, updateUserById);
 
-userRouter.put('/ban-user/:id', isLoggedIn, isAdmin, handleBanUserById);
+userRouter.put('/ban-user/:id([0-9a-fA-F]{24})', isLoggedIn, isAdmin, handleBanUserById);
 
 userRouter.post('/forget-password', validateForgetPassword, runValidation, handleForgetPassword);
 
-userRouter.put('/unban-user/:id', isLoggedIn, isAdmin, handleUnbanUserById);
+userRouter.put('/unban-user/:id([0-9a-fA-F]{24})', isLoggedIn, isAdmin, handleUnbanUserById);
 
 
 

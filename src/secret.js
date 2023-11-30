@@ -4,6 +4,7 @@ const Database_URL = process.env.DATABASE_URL;
 const defaultImagePath = process.env.DEFAULT_USER_IMAGE_PATH || 'public/images/users/default.jpeg';
 const jwtActivationKey = process.env.JWT_ACTIVATION_KEY || 'Process'
 const jwtAccessKey = process.env.JWT_ACCESS_KEY || 'ecommerce_user'
+const jwtRefreshKey = process.env.JWT_REFRESH_KEY || 'JWT_REFRESH_KEY'
 
 const smtpUsername = process.env.SMTP_USERNAME || '';
 const smtpPassword = process.env.SMTP_PASSWORD || '';
@@ -23,5 +24,6 @@ module.exports = {
     smtpPassword,
     clientURL,
     jwtAccessKey,
-    jwtForgetPasswordKey
+    jwtForgetPasswordKey,
+    jwtRefreshKey
 }
