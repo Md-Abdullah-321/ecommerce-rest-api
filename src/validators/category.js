@@ -1,8 +1,8 @@
 /*
  * Title:  Validation
- * Description: Validate Registration & Login using express validator.
+ * Description: Validate Category Model.
  * Author: Md Abdullah
- * Date: 09/12/23
+ * Date: 22/12/23
  */
 
 //Dependencies: 
