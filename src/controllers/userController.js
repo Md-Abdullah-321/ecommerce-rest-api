@@ -21,6 +21,8 @@ const bcrypt = require("bcryptjs");
 const fs = require('fs').promises;
 const jwt = require('jsonwebtoken');
 const { decode } = require('punycode');
+const checkUserExist = require('../../helper/checkUserExist');
+const sendEmail = require('../../helper/sendEmail');
 
 
 //get all users:
@@ -125,7 +127,7 @@ const processRegister = async(req, res, next) => {
          
         const imageBufferString = image.buffer.toString('base64');
          
-        const userExist = await User.exists({ email: email });
+         const userExist = await checkUserExist(email);
 
         if (userExist) {
             throw createError(409, "User with this email already exist, please login")
@@ -145,12 +147,7 @@ const processRegister = async(req, res, next) => {
         } 
 
         //send email with nodemailer:
-        try {
-            await emailWithNodeMailer(emailData);
-        } catch (emailError) {
-            next(createError(500, 'Failed to send verification email'));
-            return;
-        }
+         sendEmail(emailData);
 
         return successResponse(res, {
             statusCode: 200,
@@ -379,12 +376,7 @@ const handleForgetPassword = async (req, res, next) => {
         } 
 
         //send email with nodemailer:
-        try {
-            await emailWithNodeMailer(emailData);
-        } catch (emailError) {
-            next(createError(500, 'Failed to send forget password email'));
-            return;
-        }
+        sendEmail(emailData);
 
         return successResponse(res, {
             statusCode: 200,
