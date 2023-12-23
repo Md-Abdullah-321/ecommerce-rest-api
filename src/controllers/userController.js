@@ -100,6 +100,9 @@ const deleteUserById = async(req, res, next) => {
 
         await User.findByIdAndDelete({ _id: id, isAdmin: false });
 
+        if (user && user.image) {
+            await deleteImage(user.image);
+        }
         return successResponse(res, {
             statusCode: 200,
             message: 'user wes deleted successfully',
