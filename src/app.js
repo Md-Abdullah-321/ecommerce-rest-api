@@ -9,6 +9,7 @@ const userRouter = require('./routers/userRouter');
 const { seedRouter } = require('./routers/seedRouter');
 const { errorResponse } = require('./controllers/responseController');
 const authRouter = require('./routers/authRouter');
+const categoryRouter = require('./routers/categoryRouter');
 
 
 
@@ -37,6 +38,7 @@ app.use(cookieParser());
 app.use('/api/users', userRouter);
 app.use('/api/seed', seedRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/categories', categoryRouter);
 
 
 //client error handling:
