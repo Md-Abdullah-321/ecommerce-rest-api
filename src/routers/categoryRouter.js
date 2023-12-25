@@ -12,7 +12,7 @@ const express = require('express');
 const upload = require('../middlewares/uploadFile.');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
-const { handleCreateCategory } = require('../controllers/categoryController');
+const { handleCreateCategory, handleGetCategories } = require('../controllers/categoryController');
 const { validateCategory } = require('../validators/category');
 const categoryRouter = express.Router();
 
@@ -21,8 +21,11 @@ const categoryRouter = express.Router();
 
 
 
-//POST: :
-categoryRouter.post('/',validateCategory,runValidation,isLoggedIn, isAdmin ,handleCreateCategory);
+//POST: create category:
+categoryRouter.post('/', validateCategory, runValidation, isLoggedIn, isAdmin, handleCreateCategory);
+
+//POST: create category:
+categoryRouter.get('/', handleGetCategories);
 
 
 module.exports = categoryRouter;

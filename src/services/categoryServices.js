@@ -20,7 +20,12 @@ const createCategory = async (name) => {
 }
 
 
+const getCategories = async () => {
+    return await Category.find({}).select("name slug").lean();
+}
+
 module.exports = {
     createCategory,
+    getCategories,
 }
 
