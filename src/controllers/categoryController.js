@@ -7,9 +7,10 @@
 
 
 //Dependencies:
+const createError = require('http-errors');
 const slugify = require('../../helper/slugify');
 const Category = require('../models/categoryModel');
-const { createCategory, getCategories, getCategory } = require('../services/categoryServices');
+const { createCategory, getCategories, getCategory, updateCategory } = require('../services/categoryServices');
 const { successResponse } = require('./responseController');
 
 const handleCreateCategory = async (req, res, next) => {
@@ -45,6 +46,10 @@ const handleGetCategory = async (req, res, next) => {
         const { slug } = req.params;
         
         const category = await getCategory(slug);
+        if (!category) {
+            throw createHttpError(404, "Category not found");
+        }
+
         return successResponse(res, {
             statusCode: 200,
             message: 'Category fetched successfully.',
@@ -56,8 +61,29 @@ const handleGetCategory = async (req, res, next) => {
 }
 
 
+const handleUpdateCategory = async (req, res, next) => {
+    try {
+        const { name } = req.body;
+        const { slug } = req.params;
+
+        const updatedCategory = await updateCategory(name, slug);
+        if (!updatedCategory) {
+            throw createError(404, "Category not found");
+        }
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'Category updated successfully.',
+            payload: updatedCategory
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports = {
     handleCreateCategory,
     handleGetCategories,
-    handleGetCategory
+    handleGetCategory,
+    handleUpdateCategory
 }
