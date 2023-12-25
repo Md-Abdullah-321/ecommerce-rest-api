@@ -24,8 +24,13 @@ const getCategories = async () => {
     return await Category.find({}).select("name slug").lean();
 }
 
+const getCategory = async (slug) => {
+    return await Category.find({slug}).lean();
+}
+
 module.exports = {
     createCategory,
     getCategories,
+    getCategory,
 }
 
