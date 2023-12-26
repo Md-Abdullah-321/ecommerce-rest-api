@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 const Category = require('./categoryModel');
+const { defaultImagePath } = require('../secret');
 
 
 //name, slug, description, price, quantity, sold, shipping, image
@@ -63,7 +64,6 @@ const productSchema = new Schema({
     },
     image: {
         type: String,
-        default: defaultImagePath,
         required: [true, 'Product image is required']
     },
     category: {
