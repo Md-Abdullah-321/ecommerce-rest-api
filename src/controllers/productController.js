@@ -79,10 +79,30 @@ const handleGetProducts = async(req, res, next) => {
     }
 }
 
+//GET: get all products
+const handleGetProductBySlug = async(req, res, next) => {
+     try {
+         const { slug } = req.params;
+         
+         const product = await Product.findOne({ slug }).populate("category");
+         if (!product) {
+            throw createError(404, "Product not found with this slug.")
+        }
+        return successResponse(res, {
+            statusCode: 201,
+            message: `Product fetched successfully.`,
+            payload: product,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 
 
 module.exports = {
     handleCreateProduct,
-    handleGetProducts
+    handleGetProducts,
+    handleGetProductBySlug,
 }
