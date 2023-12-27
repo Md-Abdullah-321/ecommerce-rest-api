@@ -16,7 +16,7 @@ const checkUserExist = require('../../helper/checkUserExist');
 const sendEmail = require('../../helper/sendEmail');
 const Product = require('../models/productModel');
 const slugify = require('../../helper/slugify');
-const { createProduct } = require('../services/productServices');
+const { createProduct, getProducts } = require('../services/productServices');
 
 
 //POST: create product
@@ -48,7 +48,33 @@ const handleCreateProduct = async(req, res, next) => {
             payload: {product}
         })
     } catch (error) {
-        
+        next(error)
+    }
+}
+
+//GET: get all products
+const handleGetProducts = async(req, res, next) => {
+     try {
+         const page = parseInt(req.query.page) || 1;
+         const limit = parseInt(req.query.limit) || 4;
+
+         const {products, count} = await getProducts(page, limit);
+
+        return successResponse(res, {
+            statusCode: 201,
+            message: `Product fetched successfully.`,
+            payload: {
+                ...products,
+                pagination: {
+                    totalPages: Math.ceil(count / limit),
+                    currentPage: page,
+                    previousPage: page - 1,
+                    nextPage: page + 1,
+                    totalNumberOfProducts: count
+                }
+            }
+        })
+    } catch (error) {
         next(error)
     }
 }
@@ -58,4 +84,5 @@ const handleCreateProduct = async(req, res, next) => {
 
 module.exports = {
     handleCreateProduct,
+    handleGetProducts
 }

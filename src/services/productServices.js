@@ -22,8 +22,23 @@ const createProduct = async (productData) => {
 }
 
 
+const getProducts = async (page, limit) => {
+    const products = await Product.find({})
+        .populate("category")
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort({ createdAt: -1 });
+         
+    const count = await Product.find({}).countDocuments();
+
+    return {products, count}
+}
+
+
+
 
 module.exports = {
-    createProduct
+    createProduct,
+    getProducts
 }
 
