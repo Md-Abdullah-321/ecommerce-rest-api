@@ -8,11 +8,11 @@
 
 //Dependencies:
 const express = require('express');
-const upload = require('../middlewares/uploadFile.');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 const { handleCreateProduct } = require('../controllers/productController');
 const { validateProduct } = require('../validators/product');
+const { uploadProductStorage } = require('../middlewares/uploadFile.');
 const productRouter = express.Router();
 
 
@@ -20,7 +20,7 @@ const productRouter = express.Router();
 
 //POST: create product:
 productRouter.post('/',
-    upload.single("image"),
+    uploadProductStorage.single("image"),
     validateProduct,
     runValidation,
     handleCreateProduct);

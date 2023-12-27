@@ -9,7 +9,7 @@
 //Dependencies:
 const express = require('express');
 const { getUsers, getUserById, deleteUserById, processRegister, activateUserAccount, updateUserById, handleBanUserById, handleUnbanUserById, handleUpdatePassword, handleForgetPassword, handleResetPassword } = require('../controllers/userController');
-const upload = require('../middlewares/uploadFile.');
+const {upload} = require('../middlewares/uploadFile.');
 const { validateUserRegistration, validateUserPasswordUpdate, validateForgetPassword, validateResetPassword } = require('../validators/auth');
 const runValidation = require('../validators');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');

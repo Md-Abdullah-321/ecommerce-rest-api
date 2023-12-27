@@ -38,9 +38,6 @@ const validateUserRegistration = [
         .trim()
         .notEmpty()
         .withMessage("Phone is required"),
-    body("phone")
-        .optional()
-        .isString(),
     body('image').optional().isString().withMessage('user image is optional')
 ]
 

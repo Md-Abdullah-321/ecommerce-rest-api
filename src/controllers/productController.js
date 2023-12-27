@@ -24,7 +24,6 @@ const handleCreateProduct = async(req, res, next) => {
      try {
         const { name, description, price, quantity, sold, shipping, category } = req.body;
 
-        console.log(name);
         const image = req.file?.path;
         if (!image) {
             throw createError(400, 'image file is required');
@@ -36,10 +35,13 @@ const handleCreateProduct = async(req, res, next) => {
          
         
          const productData = {
-            name, slug: slugify(name) ,description, price, quantity, sold, shipping, category, image
-        }
+            name, slug: slugify(name) ,description, price, quantity, sold, shipping, category
+         }
+         if (image) {
+             productData.image = image;
+         }
 
-         const product = await createProduct(productData);
+        const product = await createProduct(productData);
         return successResponse(res, {
             statusCode: 201,
             message: `product created successfully.`,
