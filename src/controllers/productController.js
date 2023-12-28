@@ -58,8 +58,16 @@ const handleGetProducts = async(req, res, next) => {
      try {
          const page = parseInt(req.query.page) || 1;
          const limit = parseInt(req.query.limit) || 4;
+         const search = req.query.search || "";
 
-         const {products, count} = await getProducts(page, limit);
+        const searchRegExp = new RegExp('.*' + search + '.*', 'i');
+        const filter = {
+            $or: [
+                { name: { $regex: searchRegExp } },
+            ]
+        }  
+
+         const {products, count} = await getProducts(page, limit, filter);
 
         return successResponse(res, {
             statusCode: 201,
