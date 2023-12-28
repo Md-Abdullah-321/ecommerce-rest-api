@@ -35,7 +35,7 @@ const upload = multer({
 })
 
 const uploadProductStorage = multer({
-  storage: userStorage,
+  storage: productStorage,
   limits: {fileSize: MAX_FILE_SIZE},
   fileFilter,
 })

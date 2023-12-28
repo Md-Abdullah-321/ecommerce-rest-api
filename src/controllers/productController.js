@@ -16,7 +16,7 @@ const checkUserExist = require('../../helper/checkUserExist');
 const sendEmail = require('../../helper/sendEmail');
 const Product = require('../models/productModel');
 const slugify = require('../../helper/slugify');
-const { createProduct, getProducts, deleteProduct } = require('../services/productServices');
+const { createProduct, getProducts, deleteProduct, updateProduct } = require('../services/productServices');
 const { deleteImage } = require('../../helper/deleteImage');
 
 
@@ -115,6 +115,24 @@ const handleDeleteProductBySlug = async(req, res, next) => {
 }
 
 
+//PUT: Update product By slug:
+const handleUpdateProduct = async(req, res, next) => {
+    try {
+        const { slug } = req.params;
+        const updateOptions = { new: true, runValidators: true, contex: 'query'};
+        const image = req.file?.path;
+
+        const updatedProduct = await updateProduct(slug,image, updateOptions, req);
+        return successResponse(res, {
+            statusCode: 200,
+            message: 'product wes updated successfully',
+            payload: updatedProduct
+        })
+    } catch (error) {
+        
+        next(error)
+    }
+}
 
 
 module.exports = {
@@ -122,4 +140,5 @@ module.exports = {
     handleGetProducts,
     handleGetProductBySlug,
     handleDeleteProductBySlug,
+    handleUpdateProduct,
 }

@@ -7,8 +7,10 @@
 
 
 //Dependencies:
+const { deleteImage } = require('../../helper/deleteImage');
 const slugify = require('../../helper/slugify');
 const Product = require('../models/productModel');
+const createError = require('http-errors');
 
 const createProduct = async (productData) => {
     const { name, slug, description, price, quantity, sold, shipping, category, image } = productData;
@@ -46,11 +48,43 @@ const deleteProduct = async (slug) => {
 }
 
 
+const updateProduct = async (slug, image, updateOptions, req) => {
+    const product = await Product.findOne({ slug });
+    let updates = {}; 
+        
+    for (let key in req.body) {
+        if (['name', 'description', 'price', 'sold', "quantity", "shipping"].includes(key)) {
+            updates[key] = req.body[key];
+        }
+    }
+
+    if (updates["name"]) {
+        updates.slug = slugify(updates.name);
+    }
+    if (image) {
+        if (image.size > 1024 * 1024 * 2) {
+            throw createError(400, 'File is too large')
+        }
+
+        updates.image = image;
+        product.image !== 'default.jpeg' && await deleteImage(product.image);
+    }
+
+    const updatedProduct = await Product.findOneAndUpdate({slug}, updates, updateOptions);
+
+    if (!updatedProduct) {
+        throw createError(404, 'Product with this slug does not exist');
+    }
+    return updateProduct;
+}
+
+
 
 
 module.exports = {
     createProduct,
     getProducts,
-    deleteProduct
+    deleteProduct,
+    updateProduct
 }
 
