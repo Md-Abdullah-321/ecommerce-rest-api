@@ -16,7 +16,8 @@ const checkUserExist = require('../../helper/checkUserExist');
 const sendEmail = require('../../helper/sendEmail');
 const Product = require('../models/productModel');
 const slugify = require('../../helper/slugify');
-const { createProduct, getProducts } = require('../services/productServices');
+const { createProduct, getProducts, deleteProduct } = require('../services/productServices');
+const { deleteImage } = require('../../helper/deleteImage');
 
 
 //POST: create product
@@ -98,6 +99,21 @@ const handleGetProductBySlug = async(req, res, next) => {
     }
 }
 
+//DELETE: delete a product
+const handleDeleteProductBySlug = async(req, res, next) => {
+     try {
+        const { slug } = req.params;
+        await deleteProduct(slug);
+         
+        return successResponse(res, {
+            statusCode: 201,
+            message: `Product deleted successfully.`,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 
 
 
@@ -105,4 +121,5 @@ module.exports = {
     handleCreateProduct,
     handleGetProducts,
     handleGetProductBySlug,
+    handleDeleteProductBySlug,
 }

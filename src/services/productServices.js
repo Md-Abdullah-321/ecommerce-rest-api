@@ -35,10 +35,22 @@ const getProducts = async (page, limit) => {
 }
 
 
+const deleteProduct = async (slug) => {
+    const product = await Product.findOneAndDelete({ slug });
+    if (!product) {
+        throw createError(404, "Product not found with this slug.")
+    }     
+    if (product.image) {
+        await deleteImage(product.image);
+    }
+}
+
+
 
 
 module.exports = {
     createProduct,
-    getProducts
+    getProducts,
+    deleteProduct
 }
 
